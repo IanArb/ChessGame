@@ -20,7 +20,7 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
     private JPanel panels;
     private JLabel pieces;
     private int squareSize = 75;
-
+    private String turn = "White";
 
     public ChessProject() {
         Dimension boardSize = new Dimension(600, 600);
@@ -139,6 +139,19 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
         return opponent;
     }
 
+    private Boolean checkWhiteKing(int newX, int newY) {
+        Boolean isOpponent;
+        Component component = chessBoard.findComponentAt(newX, newY);
+        JLabel awaitingPiece = (JLabel) component;
+        String tmp1 = awaitingPiece.getIcon().toString();
+        if ((tmp1.contains("WhiteKing"))) {
+            isOpponent = false;
+        } else {
+            isOpponent = true;
+        }
+        return isOpponent;
+    }
+
     /*
     This is a method to check if a piece is a White piece.
     */
@@ -153,6 +166,32 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
             opponent = false;
         }
         return opponent;
+    }
+
+    private Boolean checkBlackKing(int newX, int newY) {
+        Boolean isOpponent;
+        Component component = chessBoard.findComponentAt(newX, newY);
+        JLabel awaitingPiece = (JLabel) component;
+        String tmp1 = awaitingPiece.getIcon().toString();
+        if ((tmp1.contains("BlackKing"))) {
+            isOpponent = false;
+        } else {
+            isOpponent = true;
+        }
+        return isOpponent;
+    }
+
+    private Boolean isPlayersTurn(String pieceName) {
+        if (pieceName.contains("White") && !(this.turn.equals("White"))) {
+            return false;
+        } else if (pieceName.contains("Black") && !(this.turn.equals("Black"))) {
+            return false;
+        } else if (pieceName.contains("White") && this.turn.equals("White")) {
+            return true;
+        } else if (pieceName.contains("Black") && this.turn.equals("Black")) {
+            return true;
+        }
+        return false;
     }
 
     /*
@@ -224,21 +263,46 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 
         if (pieceName.contains("King")) {
             //Form the square movement for the King
-            if ((xMovement == 0 && yMovement == 1) || (xMovement == 1 && yMovement == 0) || (xMovement == 1 && yMovement == 1)) {
+            boolean isYMovement = xMovement == 0 && yMovement == 1;
+            boolean isXMovement = xMovement == 1 && yMovement == 0;
+            boolean isXYMovement = xMovement == 1 && yMovement == 1;
+            if (isYMovement || isXMovement || isXYMovement) {
                 //Determine if king moves are valid
-                validMove = isKingMove(e);
+
+//                if (piecePresent(e.getX(), e.getY())) {
+//                    if (pieceName.contains("White")) {
+//                        if (checkWhiteKing(e.getX(), e.getY())) {
+//                            validMove = false;
+//                        } else {
+//                            validMove = true;
+//                        }
+//                    } else {
+//                        if (checkBlackKing(e.getX(), e.getY())) {
+//                            validMove = false;
+//                        } else {
+//                            validMove = true;
+//                        }
+//                    }
+//
+                validMove = isOpponent(e, pieceName);
+
             }
+
         }
 
         takeQueen(e, success, c, pieceName, validMove, progression);
     }
 
-    private Boolean isKingMove(MouseEvent e) {
-        Boolean validMove;
-        if(piecePresent(e.getX(), e.getY())) {
+    private Boolean isCheck(Boolean validMove, int landingX, int landingY) {
+        if (landingX == (startX + 1)
+                || landingY == (startY + 1)
+                || landingX == (startX - 1)
+                || landingY == (startY - 1)
+                || landingX == (startX + 2)
+                || landingY == (startY + 2)
+                || landingX == (startX - 2)
+                || landingY == (startY - 2)) {
             validMove = false;
-        } else {
-            validMove = true;
         }
         return validMove;
     }
@@ -255,7 +319,7 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
                 //Determine if the bishop move is valid
                 validMove = isValidBishopMove(e, pieceName, isInTheWay);
                 // Do rook movement
-            } else if ((isNotValidMove(landingX, landingY))) {
+            } else if ((isValidRookMove(landingX, landingY))) {
                 validMove = false;
             } else {
                 //Determine if the rook move is valid
@@ -325,7 +389,7 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
     private Boolean isRook(MouseEvent e, String pieceName, Boolean validMove, int landingX, int landingY) {
         if (pieceName.contains("Rook")) {
             boolean isInTheWay = false;
-            if ((isNotValidMove(landingX, landingY))) {
+            if ((isValidRookMove(landingX, landingY))) {
                 validMove = false;
             } else {
                 validMove = isVerticalHorizontal(e, pieceName, landingX, landingY, isInTheWay);
@@ -423,7 +487,7 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 
     private Boolean isDiagonal(MouseEvent e, String pieceName, int landingX, int landingY, boolean isInTheWay, int distance) {
         Boolean validMove;
-        if (isNotValidMove(landingX, landingY)) {
+        if (isValidRookMove(landingX, landingY)) {
             validMove = false;
         } else {
             // Check if starting position on the X axis is equal to starting position on the Y axis
@@ -472,7 +536,7 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
         return isInTheWay;
     }
 
-    private boolean isNotValidMove(int landingX, int landingY) {
+    private boolean isValidRookMove(int landingX, int landingY) {
         return ((landingX < 0) || (landingX > 7)) || ((landingY < 0) || (landingY > 7));
     }
 
