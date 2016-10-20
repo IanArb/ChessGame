@@ -248,8 +248,7 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 
         printChessMovements(pieceName, landingX, landingY, xMovement, yMovement, myTurn);
 
-
-        Pawn pawn = new Pawn(e, success, pieceName, validMove, progression, landingX, landingY, myTurn).invoke();
+        Pawn pawn = new Pawn(e, success, pieceName, validMove, progression, landingX, landingY, myTurn, yMovement).invoke();
         validMove = pawn.getValidMove();
         progression = pawn.getProgression();
         success = pawn.getSuccess();
@@ -265,6 +264,12 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 
         validMove = isQueen(e, pieceName, validMove, landingX, landingY, myTurn);
 
+        validMove = isKing(e, pieceName, validMove, myTurn, xMovement, yMovement);
+
+        takeQueen(e, success, c, pieceName, validMove, progression);
+    }
+
+    private Boolean isKing(MouseEvent e, String pieceName, Boolean validMove, String myTurn, int xMovement, int yMovement) {
         if (pieceName.contains(myTurn + "King")) {
             //Form the square movement for the King
             boolean isYMovement = xMovement == 0 && yMovement == 1;
@@ -284,8 +289,7 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
             }
 
         }
-
-        takeQueen(e, success, c, pieceName, validMove, progression);
+        return validMove;
     }
 
     private Boolean isLanding(int newX, int newY, String pieceName) {
@@ -730,9 +734,10 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
         private Boolean progression;
         private int landingX;
         private int landingY;
+        private int yMovement;
         private String myTurn;
 
-        public Pawn(MouseEvent e, Boolean success, String pieceName, Boolean validMove, Boolean progression, int landingX, int landingY, String myTurn) {
+        public Pawn(MouseEvent e, Boolean success, String pieceName, Boolean validMove, Boolean progression, int landingX, int landingY, String myTurn, int yMovement) {
             this.e = e;
             this.success = success;
             this.pieceName = pieceName;
@@ -741,6 +746,7 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
             this.landingX = landingX;
             this.landingY = landingY;
             this.myTurn = myTurn;
+            this.yMovement = yMovement;
         }
 
         public Boolean getSuccess() {
@@ -813,7 +819,7 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
                 if (startY == 1) {
                     if (isValidMove(e)) {
                         if (isMovedTwoSquares(e)) {
-                            if ((!piecePresent(e.getX(), (e.getY()))) && (!piecePresent(e.getX(), (e.getY() + squareSize)))) {
+                            if ((!piecePresent(e.getX(), (e.getY())))) {
                                 validMove = true;
                             } else {
                                 validMove = false;
@@ -830,8 +836,8 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
                     }
                     // Anywhere else on the board
                 } else {
-                    if ((startX - 1 >= 0) || (startX + 1 <= 7)) {
-                        if ((piecePresent(e.getX(), (e.getY()))) && ((((landingX == (startX + 1) && (startX + 1 <= 7))) || ((landingX == (startX - 1)) && (startX - 1 >= 0)))) && (landingY == (startY + 1))) {
+                    if (yMovement == 1) {
+                        if ((piecePresent(e.getX(), (e.getY()))) && ((((landingX == (startX + 1) && (startX + 1 <= 7))) || ((landingX == (startX - 1)) && (startX - 1 >= 0)))) && landingY == (startY + 1)) {
                             checkWhiteOpponent();
                         } else {
                             // Check if the piece is not present and if not.. invalid move
