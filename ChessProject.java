@@ -162,32 +162,6 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
         return opponent;
     }
 
-    private Boolean isBlackKing(int newX, int newY) {
-        Boolean isBlack;
-        Component component = chessBoard.findComponentAt(newX, newY);
-        JLabel awaitingPiece = (JLabel) component;
-        String tmp1 = awaitingPiece.getIcon().toString();
-        if(tmp1.contains("BlackKing")) {
-            isBlack = true;
-        } else {
-            isBlack = false;
-        }
-        return isBlack;
-    }
-
-    private Boolean isWhiteKing(int newX, int newY) {
-        Boolean isBlack;
-        Component component = chessBoard.findComponentAt(newX, newY);
-        JLabel awaitingPiece = (JLabel) component;
-        String tmp1 = awaitingPiece.getIcon().toString();
-        if(tmp1.contains("WhiteKing")) {
-            isBlack = true;
-        } else {
-            isBlack = false;
-        }
-        return isBlack;
-    }
-
     private String playersTurn() {
         if((counter % 2) == 0) {
             return "White";
