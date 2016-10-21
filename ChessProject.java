@@ -310,7 +310,6 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
                     Component component = chessBoard.findComponentAt(loc[0], loc[1]);
                     JLabel awaitingPiece = (JLabel) component;
                     String tmp1 = awaitingPiece.getIcon().toString();
-                    System.out.print(tmp1);
                     if ((tmp1.contains("King"))) {
                         isKingPresent = true;
                     }
@@ -664,7 +663,7 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
         System.out.println("The xMovement is : " + xMovement);
         System.out.println("The yMovement is : " + yMovement);
         System.out.println("The landing coordinates are : " + "( " + landingX + "," + landingY + ")");
-        System.out.println("Players turn is : " +myTurn);
+        System.out.println("Players turn is : " + myTurn);
         System.out.println("----------------------------------------------");
     }
 
